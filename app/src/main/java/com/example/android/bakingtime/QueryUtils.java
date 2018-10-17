@@ -152,13 +152,15 @@ public class QueryUtils {
                     String ingredient = currentIngredients.getString("ingredient");
 
                     ingredientString = ingredientString + "\u2022 " + ingredient + " (" + quantity + " " + measure + ")\n";
-                    Log.i(LOG_TAG,name + ": " + ingredientString);
+//                    Log.i(LOG_TAG,name + ": " + ingredientString);
                 }
 
                 JSONArray stepsArray = currentRecipes.getJSONArray("steps");
 
                 String stepId = "";
                 String shortDescription = "";
+                String description = "";
+                String videoURL;
 
                 List<RecipeSteps> recipeSteps = new ArrayList<>();
 
@@ -168,10 +170,12 @@ public class QueryUtils {
                     //Extract steps details
                     stepId = currentSteps.getString("id");
                     shortDescription = currentSteps.getString("shortDescription");
+                    description = currentSteps.getString("description");
+                    videoURL = currentSteps.getString("videoURL");
 
-                    Log.i(LOG_TAG,name + ": " + stepId + ": " + shortDescription);
+//                    Log.i(LOG_TAG,name + ": " + stepId + ": " + shortDescription);
 
-                    RecipeSteps recipeSteps1 = new RecipeSteps(stepId,shortDescription);
+                    RecipeSteps recipeSteps1 = new RecipeSteps(stepId,shortDescription,description,videoURL);
                     recipeSteps.add(recipeSteps1);
                 }
 

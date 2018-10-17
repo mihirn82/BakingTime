@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
      */
     private static final int RECIPE_LOADER_ID = 1;
 
-    /** Adapter for the list of movies */
+    /** Adapter for the list of recipes */
     private RecipesAdapter mAdapter;
 
     public static final String KEY_RECIPE="recipe";
@@ -73,11 +73,12 @@ public class MainActivity extends AppCompatActivity
                 Recipes currentRecipe = mAdapter.getItem(position);
                 Log.i(LOG_TAG,"Id = " + currentRecipe.getId());
                 Log.i(LOG_TAG,"Name = " + currentRecipe.getName());
-                Log.i(LOG_TAG,"Ingredients = " + currentRecipe.getIngredients());
+//                Log.i(LOG_TAG,"Ingredients = " + currentRecipe.getIngredients());
 
                 for (int i = 0; i < currentRecipe.getRecipeSteps().size(); i++) {
-                    Log.i(LOG_TAG,"StepId = " + currentRecipe.getRecipeSteps().get(i).getStepId());
-                    Log.i(LOG_TAG,"Description = " + currentRecipe.getRecipeSteps().get(i).getShortDescription());
+//                    Log.i(LOG_TAG,"StepId = " + currentRecipe.getRecipeSteps().get(i).getStepId());
+//                    Log.i(LOG_TAG,"ShortDescription = " + currentRecipe.getRecipeSteps().get(i).getShortDescription());
+//                    Log.i(LOG_TAG,"Description = " + currentRecipe.getRecipeSteps().get(i).getDescription());
                 }
 
                 intent.putExtra(KEY_RECIPE,currentRecipe);
