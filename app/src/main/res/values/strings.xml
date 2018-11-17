@@ -1,7 +1,16 @@
 <resources>
     <string name="app_name">Baking Time</string>
-
     <string name="no_recipes">No Recipes Found</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="ingredients_list">Ingredients List:</string>
+    <string name="ingredients">123</string>
+    <string name="step_name">Step Name</string>
+    <string name="step_description">Step Description</string>
+    <string name="recipe_card">Recipe Card</string>
+    <string name="servings">Servings: </string>
+    <string name="servings_count">123</string>
+    <string name="recipe_step">Recipe Step</string>
+    <string name="step_number">0.</string>
 </resources>

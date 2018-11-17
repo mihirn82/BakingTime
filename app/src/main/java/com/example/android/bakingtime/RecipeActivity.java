@@ -1,15 +1,20 @@
 package com.example.android.bakingtime;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import butterknife.ButterKnife;
 
 import static com.example.android.bakingtime.MainActivity.KEY_RECIPE;
 
@@ -17,81 +22,123 @@ import static com.example.android.bakingtime.MainActivity.KEY_RECIPE;
  * Created by mihirnewalkar on 9/16/17.
  */
 
-public class RecipeActivity extends AppCompatActivity {
+public class RecipeActivity extends AppCompatActivity implements FragmentActionListener{
 
     public static final String LOG_TAG = RecipeActivity.class.getName();
 
-    private String id = "";
-    private String ingredients = "";
-    private ArrayList<RecipeSteps> recipeSteps = new ArrayList<>();
-    private RecipeStepsAdapter mRecipeStepsAdapter;
+    private Bundle bundle;
 
     public static final String KEY_RECIPE_STEP="recipeStep";
+    public static final String myRecipe = "myRecipe";
+    public static final String Ingredients = "Ingredients";
+    public static final String RECIPE_NAME = "recipeName";
+
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
+    String selectedStep;
+
+    Recipes currentRecipe;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+        ButterKnife.bind(this);
+        fragmentManager = getFragmentManager();
 
         Intent intent = getIntent();
 
-//        final List <String> recipeStepsList = new ArrayList<String>();
 
         if (intent != null) {
 
-            Recipes currentRecipe = intent.getParcelableExtra(KEY_RECIPE);
+            currentRecipe = intent.getParcelableExtra(KEY_RECIPE);
+
+            bundle = new Bundle();
+            bundle.putParcelable("RECIPE",currentRecipe);
 
             this.setTitle(currentRecipe.getName());
 
-            ingredients = currentRecipe.getIngredients();
-            recipeSteps = currentRecipe.getRecipeSteps();
-            Log.i(LOG_TAG,"Recipe Step size "+String.valueOf(recipeSteps.size()));
+            SharedPreferences.Editor editor = getSharedPreferences(myRecipe,Context.MODE_PRIVATE).edit();
+            editor.putString(RECIPE_NAME,currentRecipe.getName());
+            editor.putString(Ingredients,currentRecipe.getIngredients());
+            editor.commit();
 
-            for (int i = 0; i<recipeSteps.size(); i++) {
-                String stepId = currentRecipe.getRecipeSteps().get(i).getStepId();
-                String stepShortDescription = currentRecipe.getRecipeSteps().get(i).getShortDescription();
-                String stepDescription = currentRecipe.getRecipeSteps().get(i).getDescription();
-                Log.i(LOG_TAG,"Recipe Steps: " + stepId + stepShortDescription + stepDescription);
-
-//                recipeStepsList.add(stepId + ".  " + stepShortDescription);
-            }
-
+            AppWidgetManager widgetManager = AppWidgetManager.getInstance(getApplicationContext());
+            int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), BakingWidgetProvider.class));
+            Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, getApplicationContext(), BakingWidgetProvider.class);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            sendBroadcast(updateIntent);
         }
 
-        TextView titleTV = (TextView) findViewById(R.id.ingredients_tv);
-        titleTV.setText(ingredients);
+        if (findViewById(R.id.activity_recipe_portrait) != null){
+            Log.i(LOG_TAG,"Orientation is Portrait");
+            addRecipeFragment();
+            Log.i(LOG_TAG,"Returned from Recipe Fragment Portrait");
 
-        ListView listView = (ListView) findViewById(R.id.list_view_steps);
-        mRecipeStepsAdapter = new RecipeStepsAdapter(this,new ArrayList<RecipeSteps>());
-
-//        mRecipeStepsAdapter.swapData(recipeSteps);
-//        mRecipeStepsAdapter.addAll(recipeSteps);
-        if (listView.getAdapter() == null) {
-//            mRecipeStepsAdapter = new RecipeStepsAdapter(this, new ArrayList<RecipeSteps>());
-            mRecipeStepsAdapter.swapData(recipeSteps);
-            listView.setAdapter(mRecipeStepsAdapter);
-            Log.i(LOG_TAG,"Listview null");
+        } else if (findViewById(R.id.activity_recipe_landscape) != null) {
+            Log.i(LOG_TAG,"Orientation is Landscape");
+            addRecipeFragment();
+            Log.i(LOG_TAG,"Returned from Recipe Fragment Landscape");
+            addStepFragment(selectedStep);
+            Log.i(LOG_TAG,"Returned from Step Fragment Landscape");
         }
-        else {
-//            mRecipeStepsAdapter.swapData(recipeSteps);
-            ((RecipeStepsAdapter)listView.getAdapter()).swapData(recipeSteps);
-            Log.i(LOG_TAG,"Listview not null");
+    }
+
+    private void addRecipeFragment() {
+        fragmentTransaction = fragmentManager.beginTransaction();
+        RecipeFragment recipeFragment = new RecipeFragment();
+        recipeFragment.setFragmentActionListener(this);
+
+        recipeFragment.setArguments(bundle);
+
+        fragmentTransaction.replace(R.id.fragmentContainer,recipeFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
+        Log.i(LOG_TAG,"I am committed for Recipe Fragment");
+    }
+
+    private void addStepFragment(String selectedStep) {
+        fragmentTransaction = fragmentManager.beginTransaction();
+        StepFragment stepFragment = new StepFragment();
+
+        bundle.putString(FragmentActionListener.KEY_SELECTED_STEP,selectedStep);
+        stepFragment.setArguments(bundle);
+
+        if (findViewById(R.id.activity_recipe_portrait) != null) {
+            fragmentTransaction.replace(R.id.fragmentContainer,stepFragment);
+        } else {
+            fragmentTransaction.replace(R.id.fragmentContainer2,stepFragment);
         }
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
 
+        Log.i(LOG_TAG,"I am committed for Step Fragment");
+    }
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent (RecipeActivity.this, StepActivity.class);
+    @Override
+    public void onBackPressed() { //or use on menu item clicked
+        super.onBackPressed();
 
-                RecipeSteps currentStep = mRecipeStepsAdapter.getItem(i);
-                Log.i(LOG_TAG,"Inside OnClick step");
-                Log.i(LOG_TAG,"Description = " + currentStep.getStepId() + currentStep.getShortDescription() + currentStep.getDescription());
+        Log.i (LOG_TAG,"I pressed Back!!!");
+    }
 
-                intent.putExtra(KEY_RECIPE_STEP,currentStep);
+    @Override
+    public void onStepSelected(String step) {
+        selectedStep = step;
+        addStepFragment(selectedStep);
 
-                startActivity(intent);
-            }
-        });
+        Log.i(LOG_TAG,"Inside callback method");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.i(LOG_TAG,"Orientation changed to landscape");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.i(LOG_TAG,"Orientation changed to portrait");
+        }
     }
 }

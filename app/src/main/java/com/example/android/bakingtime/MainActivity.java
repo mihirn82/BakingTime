@@ -9,6 +9,10 @@ import android.net.Uri;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.android.bakingtime.IdlingResource.SimpleIdlingResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +53,24 @@ public class MainActivity extends AppCompatActivity
 
     private ListView recipesListView = null;
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getIdlingResource();
 
         // Find a reference to the {@link ListView} in the layout
         recipesListView = (ListView) findViewById(R.id.list_view_recipes);
@@ -73,13 +93,6 @@ public class MainActivity extends AppCompatActivity
                 Recipes currentRecipe = mAdapter.getItem(position);
                 Log.i(LOG_TAG,"Id = " + currentRecipe.getId());
                 Log.i(LOG_TAG,"Name = " + currentRecipe.getName());
-//                Log.i(LOG_TAG,"Ingredients = " + currentRecipe.getIngredients());
-
-                for (int i = 0; i < currentRecipe.getRecipeSteps().size(); i++) {
-//                    Log.i(LOG_TAG,"StepId = " + currentRecipe.getRecipeSteps().get(i).getStepId());
-//                    Log.i(LOG_TAG,"ShortDescription = " + currentRecipe.getRecipeSteps().get(i).getShortDescription());
-//                    Log.i(LOG_TAG,"Description = " + currentRecipe.getRecipeSteps().get(i).getDescription());
-                }
 
                 intent.putExtra(KEY_RECIPE,currentRecipe);
 
