@@ -185,11 +185,35 @@ public class StepFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i(LOG_TAG,"On Resume");
+//        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+//            initializePlayer(Uri.parse(videoURL));
+//        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(LOG_TAG,"On Start");
+//        if (Util.SDK_INT > 23) {
+//            initializePlayer(Uri.parse(videoURL));
+//        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i(LOG_TAG,"On Pause");
+//        if (Util.SDK_INT <= 23) {
+//            releasePlayer();
+//        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(LOG_TAG,"On Stop");
+//        if (Util.SDK_INT > 23) {
+//            releasePlayer();
+//        }
     }
 }
