@@ -3,7 +3,6 @@ package com.example.android.bakingtime;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
 import butterknife.ButterKnife;
 
 /**

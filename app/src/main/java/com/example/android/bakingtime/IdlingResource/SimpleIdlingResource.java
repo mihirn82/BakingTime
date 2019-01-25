@@ -1,11 +1,11 @@
 package com.example.android.bakingtime.IdlingResource;
 
-import android.support.annotation.Nullable;
-import android.support.test.espresso.IdlingResource;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SimpleIdlingResource implements IdlingResource{
+import androidx.annotation.Nullable;
+import androidx.test.espresso.IdlingResource;
+
+public class SimpleIdlingResource implements IdlingResource {
 
     @Nullable private volatile IdlingResource.ResourceCallback mCallback;
 

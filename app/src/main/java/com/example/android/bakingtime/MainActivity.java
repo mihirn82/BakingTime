@@ -8,12 +8,6 @@ import android.app.LoaderManager;
 import android.net.Uri;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.support.test.espresso.IdlingResource;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +20,12 @@ import com.example.android.bakingtime.IdlingResource.SimpleIdlingResource;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.test.espresso.IdlingResource;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderCallbacks {
