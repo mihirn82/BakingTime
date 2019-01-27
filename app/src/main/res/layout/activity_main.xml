@@ -4,12 +4,12 @@
     android:orientation="vertical">
     <!-- A CardView that contains a TextView -->
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_view_recipes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/empty_view"

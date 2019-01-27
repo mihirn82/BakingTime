@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.IdlingResource;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity
 
     private ProgressBar mProgress;
 
-    private ListView recipesListView = null;
+//    private ListView recipesListView = null;
+    private RecyclerView recyclerView = null;
 
     @Nullable
     private SimpleIdlingResource mIdlingResource;
@@ -72,32 +74,34 @@ public class MainActivity extends AppCompatActivity
         getIdlingResource();
 
         // Find a reference to the {@link ListView} in the layout
-        recipesListView = (ListView) findViewById(R.id.list_view_recipes);
+//        recipesListView = (ListView) findViewById(R.id.list_view_recipes);
+        recyclerView = (RecyclerView) findViewById(R.id.list_view_recipes);
 
         mProgress = (ProgressBar) findViewById(R.id.ProgressBar);
 
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        recipesListView.setEmptyView(mEmptyStateTextView);
+//        recipesListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new {@link ArrayAdapter} of recipes
         mAdapter = new RecipesAdapter(this, new ArrayList<Recipes>());
 
-        recipesListView.setAdapter(mAdapter);
+//        recipesListView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        recipesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent (MainActivity.this, RecipeActivity.class);
-
-                Recipes currentRecipe = mAdapter.getItem(position);
-                Log.i(LOG_TAG,"Id = " + currentRecipe.getId());
-                Log.i(LOG_TAG,"Name = " + currentRecipe.getName());
-
-                intent.putExtra(KEY_RECIPE,currentRecipe);
-
-                startActivity(intent);
-            }
-        });
+//        recipesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                Intent intent = new Intent (MainActivity.this, RecipeActivity.class);
+//
+//                Recipes currentRecipe = mAdapter.getItem(position);
+//                Log.i(LOG_TAG,"Id = " + currentRecipe.getId());
+//                Log.i(LOG_TAG,"Name = " + currentRecipe.getName());
+//
+//                intent.putExtra(KEY_RECIPE,currentRecipe);
+//
+//                startActivity(intent);
+//            }
+//        });
 
 
         // Get a reference to the LoaderManager, in order to interact with loaders.
@@ -147,6 +151,6 @@ public class MainActivity extends AppCompatActivity
 
         Log.v(LOG_TAG,"Inside onLoaderReset");
 
-        mAdapter.clear();
+//        mAdapter.clear();
     }
 }
