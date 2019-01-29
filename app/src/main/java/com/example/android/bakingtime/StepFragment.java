@@ -34,7 +34,7 @@ import butterknife.ButterKnife;
 
 public class StepFragment extends Fragment {
 
-    public static final String LOG_TAG = StepFragment.class.getName();
+    public static final String LOG_TAG = "StepFragment";
 
     private String stepId;
     private String shortDescription = "";
@@ -46,7 +46,14 @@ public class StepFragment extends Fragment {
     private Recipes currentRecipe;
     private ArrayList<RecipeSteps> recipeSteps = new ArrayList<>();
     private RecipeStepsAdapter mRecipeStepsAdapter;
-    private String selectedStep;
+    private String mSelectedStep;
+
+    private MediaSource mMediaSource = null;
+    private long mExoPlayerSeekState = -1L;
+
+    public StepFragment() {
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -56,26 +63,26 @@ public class StepFragment extends Fragment {
 
         Log.i(LOG_TAG,"Inside StepFragment");
 
-        mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+        mPlayerView = rootView.findViewById(R.id.playerView);
 
         if (savedInstanceState != null) {
             currentStep = savedInstanceState.getParcelable("currentStep");
         } else {
 
-            currentRecipe = (Recipes) getArguments().getParcelable("RECIPE");
+            currentRecipe = getArguments().getParcelable("RECIPE");
 
-            Log.i(LOG_TAG,"Step number = "+selectedStep);
-            if (selectedStep == null) {
-                selectedStep = getArguments().getString(FragmentActionListener.KEY_SELECTED_STEP,"0");
+            Log.i(LOG_TAG,"Step number = "+ mSelectedStep);
+            if (mSelectedStep == null) {
+                mSelectedStep = getArguments().getString(FragmentActionListener.KEY_SELECTED_STEP,"0");
             }
 
-            Log.i(LOG_TAG,"Step number = "+selectedStep);
+            Log.i(LOG_TAG,"Step number = "+ mSelectedStep);
 
             recipeSteps = currentRecipe.getRecipeSteps();
 
             mRecipeStepsAdapter = new RecipeStepsAdapter(getActivity(),new ArrayList<RecipeSteps>());
             mRecipeStepsAdapter.swapData(recipeSteps);
-            currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(selectedStep));
+            currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(mSelectedStep));
         }
 
         stepId = currentStep.getStepId();
@@ -83,21 +90,22 @@ public class StepFragment extends Fragment {
         description = currentStep.getDescription();
         videoURL = currentStep.getVideoURL();
 
+        extractMediaSource(Uri.parse(videoURL));
+
         Log.i(LOG_TAG,description + " " + videoURL);
 
         Log.i(LOG_TAG,"Step ID = " + stepId);
-        initializePlayer(Uri.parse(videoURL));
 
-        TextView shortDescriptionTV = (TextView) rootView.findViewById(R.id.recipe_step_tv);
+        TextView shortDescriptionTV = rootView.findViewById(R.id.recipe_step_tv);
         shortDescriptionTV.setText(shortDescription);
 
-        TextView descriptionTV = (TextView) rootView.findViewById(R.id.description_tv);
+        TextView descriptionTV = rootView.findViewById(R.id.description_tv);
         descriptionTV.setText(description);
 
         if (getActivity().findViewById(R.id.activity_recipe_portrait) != null) {
 
-            Button previousButton = (Button) rootView.findViewById(R.id.previous_button);
-            Button nextButton = (Button) rootView.findViewById(R.id.next_button);
+            Button previousButton = rootView.findViewById(R.id.previous_button);
+            Button nextButton = rootView.findViewById(R.id.next_button);
 
             if (stepId.equals("0")) {
                 previousButton.setClickable(false);
@@ -105,10 +113,10 @@ public class StepFragment extends Fragment {
             } else {
                 previousButton.setOnClickListener(new View.OnClickListener(){
                     public void onClick(View view) {
-                        selectedStep = String.valueOf(Integer.parseInt(selectedStep) - 1);
+                        mSelectedStep = String.valueOf(Integer.parseInt(mSelectedStep) - 1);
 
-                        currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(selectedStep));
-                        Log.i(LOG_TAG,"Current Step =" + Integer.parseInt(selectedStep));
+                        currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(mSelectedStep));
+                        Log.i(LOG_TAG,"Current Step =" + Integer.parseInt(mSelectedStep));
 
                         getFragmentManager().beginTransaction().detach(getActivity().getFragmentManager().findFragmentById(R.id.fragmentContainer)).
                                 attach(getActivity().getFragmentManager().findFragmentById(R.id.fragmentContainer)).commit();
@@ -124,10 +132,10 @@ public class StepFragment extends Fragment {
             } else {
                 nextButton.setOnClickListener(new View.OnClickListener(){
                     public void onClick(View view) {
-                        selectedStep = String.valueOf(Integer.parseInt(selectedStep) + 1);
+                        mSelectedStep = String.valueOf(Integer.parseInt(mSelectedStep) + 1);
 
-                        currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(selectedStep));
-                        Log.i(LOG_TAG,"Current Step =" + Integer.parseInt(selectedStep));
+                        currentStep = mRecipeStepsAdapter.getItem(Integer.parseInt(mSelectedStep));
+                        Log.i(LOG_TAG,"Current Step =" + Integer.parseInt(mSelectedStep));
 
                         getFragmentManager().beginTransaction().detach(getActivity().getFragmentManager().findFragmentById(R.id.fragmentContainer)).
                                 attach(getActivity().getFragmentManager().findFragmentById(R.id.fragmentContainer)).commit();
@@ -140,33 +148,41 @@ public class StepFragment extends Fragment {
         return rootView;
     }
 
-    private void initializePlayer(Uri videoURL) {
+    private void extractMediaSource(Uri videoUrl) {
+        if (mMediaSource == null) {
+            String userAgent = Util.getUserAgent(getActivity(),"Baking Time");
+            mMediaSource = new ExtractorMediaSource(videoUrl, new DefaultDataSourceFactory(getActivity(), userAgent),
+                    new DefaultExtractorsFactory(), null, null);
+        }
+    }
+
+    private void initializePlayer() {
         if (mExoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             Log.i(LOG_TAG,"I am here");
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity().getApplicationContext(),trackSelector,loadControl);
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(
+                    getActivity().getApplicationContext(),
+                    trackSelector,
+                    loadControl
+            );
             Log.i(LOG_TAG,"I am here2");
             mPlayerView.setPlayer(mExoPlayer);
             Log.i(LOG_TAG,"I am here3");
-            String userAgent = Util.getUserAgent(getActivity(),"Baking Time");
-            MediaSource mediaSource = new ExtractorMediaSource(videoURL,new DefaultDataSourceFactory(getActivity(),userAgent),
-                    new DefaultExtractorsFactory(),null,null);
-            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.prepare(mMediaSource, false, true);
+            if (mExoPlayerSeekState > -1) {
+                mExoPlayer.seekTo(mExoPlayerSeekState);
+                mExoPlayerSeekState = -1;
+            }
             mExoPlayer.setPlayWhenReady(true);
         }
     }
 
     private void releasePlayer() {
+        mExoPlayerSeekState = mExoPlayer.getCurrentPosition();
         mExoPlayer.stop();
         mExoPlayer.release();
         mExoPlayer=null;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        releasePlayer();
     }
 
     @Override
@@ -185,35 +201,35 @@ public class StepFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i(LOG_TAG,"On Resume");
-//        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-//            initializePlayer(Uri.parse(videoURL));
-//        }
+        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            initializePlayer();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         Log.i(LOG_TAG,"On Start");
-//        if (Util.SDK_INT > 23) {
-//            initializePlayer(Uri.parse(videoURL));
-//        }
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i(LOG_TAG,"On Pause");
-//        if (Util.SDK_INT <= 23) {
-//            releasePlayer();
-//        }
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Log.i(LOG_TAG,"On Stop");
-//        if (Util.SDK_INT > 23) {
-//            releasePlayer();
-//        }
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 }

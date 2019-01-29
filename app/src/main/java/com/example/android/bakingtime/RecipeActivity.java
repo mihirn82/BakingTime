@@ -98,7 +98,10 @@ public class RecipeActivity extends AppCompatActivity implements FragmentActionL
 
     private void addStepFragment(String selectedStep) {
         fragmentTransaction = fragmentManager.beginTransaction();
-        StepFragment stepFragment = new StepFragment();
+        StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentByTag(StepFragment.LOG_TAG);
+        if (stepFragment == null) {
+            stepFragment = new StepFragment();
+        }
 
         bundle.putString(FragmentActionListener.KEY_SELECTED_STEP,selectedStep);
         stepFragment.setArguments(bundle);
@@ -108,6 +111,7 @@ public class RecipeActivity extends AppCompatActivity implements FragmentActionL
         } else {
             fragmentTransaction.replace(R.id.fragmentContainer2,stepFragment);
         }
+
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
