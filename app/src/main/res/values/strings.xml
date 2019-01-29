@@ -9,7 +9,7 @@
     <string name="step_name">Step Name</string>
     <string name="step_description">Step Description</string>
     <string name="recipe_card">Recipe Card</string>
-    <string name="servings">Servings: </string>
+    <string name="servings">Servings: %1d</string>
     <string name="servings_count">123</string>
     <string name="recipe_step">Recipe Step</string>
     <string name="step_number">0.</string>
