@@ -98,7 +98,11 @@ public class RecipeActivity extends AppCompatActivity implements FragmentActionL
 
     private void addStepFragment(String selectedStep) {
         fragmentTransaction = fragmentManager.beginTransaction();
-        StepFragment stepFragment = new StepFragment();
+//        StepFragment stepFragment = new StepFragment();
+        StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentByTag(StepFragment.LOG_TAG);
+        if (stepFragment == null) {
+            stepFragment = new StepFragment();
+        }
 
         bundle.putString(FragmentActionListener.KEY_SELECTED_STEP,selectedStep);
         stepFragment.setArguments(bundle);
