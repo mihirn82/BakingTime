@@ -169,20 +169,15 @@ public class StepFragment extends Fragment {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             Log.i(LOG_TAG,"I am here");
-//            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity().getApplicationContext(),trackSelector,loadControl);
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity().getApplicationContext(), trackSelector, loadControl);
             Log.i(LOG_TAG,"I am here2");
             mPlayerView.setPlayer(mExoPlayer);
             Log.i(LOG_TAG,"I am here3");
-//            String userAgent = Util.getUserAgent(getActivity(),"Baking Time");
-//            MediaSource mediaSource = new ExtractorMediaSource(videoURL,new DefaultDataSourceFactory(getActivity(),userAgent),
-//                    new DefaultExtractorsFactory(),null,null);
-//            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.prepare(mMediaSource, false, true);
             if (mExoPlayerSeekState > -1) {
                 mExoPlayer.seekTo(mExoPlayerSeekState);
                 mExoPlayerSeekState = -1;
             }
+            mExoPlayer.prepare(mMediaSource, false, true);
             mExoPlayer.setPlayWhenReady(true);
         }
     }
@@ -193,12 +188,6 @@ public class StepFragment extends Fragment {
         mExoPlayer.release();
         mExoPlayer=null;
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        releasePlayer();
-//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -225,7 +214,7 @@ public class StepFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.i(LOG_TAG,"On Start");
-        if (Util.SDK_INT > 23) {
+        if (Util.SDK_INT > 23 || mExoPlayer == null) {
             initializePlayer();
         }
     }

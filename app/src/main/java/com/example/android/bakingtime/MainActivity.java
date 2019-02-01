@@ -52,9 +52,6 @@ public class MainActivity extends AppCompatActivity
 
     private ProgressBar mProgress;
 
-    private ListView recipesListView = null;
-    private RecyclerView recyclerView = null;
-
     @Nullable
     private SimpleIdlingResource mIdlingResource;
 
@@ -74,39 +71,12 @@ public class MainActivity extends AppCompatActivity
 
         getIdlingResource();
 
-        // Find a reference to the {@link ListView} in the layout
-//        recipesListView = (ListView) findViewById(R.id.list_view_recipes);
         RecyclerView recyclerView = findViewById(R.id.list_view_recipes);
-
-//        mProgress = (ProgressBar) findViewById(R.id.ProgressBar);
         mProgress = findViewById(R.id.ProgressBar);
-
-//        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         mEmptyStateTextView = findViewById(R.id.empty_view);
-
-//        recipesListView.setEmptyView(mEmptyStateTextView);
-
-        // Create a new {@link ArrayAdapter} of recipes
-//        mAdapter = new RecipesAdapter(this, new ArrayList<Recipes>());
         mAdapter = new RecipesAdapter();
-
-//        recipesListView.setAdapter(mAdapter);
         recyclerView.setAdapter(mAdapter);
 
-//        recipesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                Intent intent = new Intent (MainActivity.this, RecipeActivity.class);
-//
-//                Recipes currentRecipe = mAdapter.getItem(position);
-//                Log.i(LOG_TAG,"Id = " + currentRecipe.getId());
-//                Log.i(LOG_TAG,"Name = " + currentRecipe.getName());
-//
-//                intent.putExtra(KEY_RECIPE,currentRecipe);
-//
-//                startActivity(intent);
-//            }
-//        });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter.setOnItemClickListener(this);
 
@@ -135,8 +105,6 @@ public class MainActivity extends AppCompatActivity
         Uri baseUri = Uri.parse(RECIPE_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
         return new RecipesLoader(this, uriBuilder.toString());
-
-
     }
 
     @Override
@@ -145,14 +113,9 @@ public class MainActivity extends AppCompatActivity
 
         mProgress.setVisibility(View.GONE);
 
-        // Set empty state text to display "No recipes found."
-//        mEmptyStateTextView.setText(R.string.no_recipes);
-//
-//        mAdapter.swapData((List<Recipes>) data);
-
         if (data.isEmpty()) {
-        // Set empty state text to display "No recipes found."
-        mEmptyStateTextView.setText(R.string.no_recipes);
+            // Set empty state text to display "No recipes found."
+            mEmptyStateTextView.setText(R.string.no_recipes);
         }
 
         mAdapter.swapData(data);
@@ -160,10 +123,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader loader) {
-
         Log.v(LOG_TAG,"Inside onLoaderReset");
-
-//        mAdapter.clear();
         mAdapter.swapData(new ArrayList<>());
     }
 

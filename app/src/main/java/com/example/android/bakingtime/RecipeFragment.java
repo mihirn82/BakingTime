@@ -19,7 +19,7 @@ import butterknife.Unbinder;
 
 public class RecipeFragment extends Fragment {
 
-    public static final String LOG_TAG = RecipeFragment.class.getName();
+    public static final String LOG_TAG = "RecipeFragment";
 
     private String ingredients = "";
     private ArrayList<RecipeSteps> recipeSteps = new ArrayList<>();
