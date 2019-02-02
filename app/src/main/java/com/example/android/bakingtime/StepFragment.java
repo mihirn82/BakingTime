@@ -34,7 +34,6 @@ import butterknife.ButterKnife;
 
 public class StepFragment extends Fragment {
 
-//    public static final String LOG_TAG = StepFragment.class.getName();
     public static final String LOG_TAG = "StepFragment";
 
     private String stepId;
@@ -47,7 +46,6 @@ public class StepFragment extends Fragment {
     private Recipes currentRecipe;
     private ArrayList<RecipeSteps> recipeSteps = new ArrayList<>();
     private RecipeStepsAdapter mRecipeStepsAdapter;
-//    private String selectedStep;
     private String mSelectedStep;
 
     private MediaSource mMediaSource = null;
@@ -65,14 +63,12 @@ public class StepFragment extends Fragment {
 
         Log.i(LOG_TAG,"Inside StepFragment");
 
-//        mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
         mPlayerView = rootView.findViewById(R.id.playerView);
 
         if (savedInstanceState != null) {
             currentStep = savedInstanceState.getParcelable("currentStep");
         } else {
 
-//            currentRecipe = (Recipes) getArguments().getParcelable("RECIPE");
             currentRecipe = getArguments().getParcelable("RECIPE");
 
             Log.i(LOG_TAG,"Step number = "+ mSelectedStep);
@@ -98,20 +94,15 @@ public class StepFragment extends Fragment {
         Log.i(LOG_TAG,description + " " + videoURL);
 
         Log.i(LOG_TAG,"Step ID = " + stepId);
-//        initializePlayer(Uri.parse(videoURL));
 
-//        TextView shortDescriptionTV = (TextView) rootView.findViewById(R.id.recipe_step_tv);
         TextView shortDescriptionTV = rootView.findViewById(R.id.recipe_step_tv);
         shortDescriptionTV.setText(shortDescription);
 
-//        TextView descriptionTV = (TextView) rootView.findViewById(R.id.description_tv);
         TextView descriptionTV = rootView.findViewById(R.id.description_tv);
         descriptionTV.setText(description);
 
         if (getActivity().findViewById(R.id.activity_recipe_portrait) != null) {
 
-//            Button previousButton = (Button) rootView.findViewById(R.id.previous_button);
-//            Button nextButton = (Button) rootView.findViewById(R.id.next_button);
             Button previousButton = rootView.findViewById(R.id.previous_button);
             Button nextButton = rootView.findViewById(R.id.next_button);
 
@@ -169,20 +160,16 @@ public class StepFragment extends Fragment {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             Log.i(LOG_TAG,"I am here");
-//            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity().getApplicationContext(),trackSelector,loadControl);
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity().getApplicationContext(), trackSelector, loadControl);
             Log.i(LOG_TAG,"I am here2");
             mPlayerView.setPlayer(mExoPlayer);
             Log.i(LOG_TAG,"I am here3");
-//            String userAgent = Util.getUserAgent(getActivity(),"Baking Time");
-//            MediaSource mediaSource = new ExtractorMediaSource(videoURL,new DefaultDataSourceFactory(getActivity(),userAgent),
-//                    new DefaultExtractorsFactory(),null,null);
-//            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.prepare(mMediaSource, false, true);
+
             if (mExoPlayerSeekState > -1) {
                 mExoPlayer.seekTo(mExoPlayerSeekState);
                 mExoPlayerSeekState = -1;
             }
+            mExoPlayer.prepare(mMediaSource, false, true);
             mExoPlayer.setPlayWhenReady(true);
         }
     }
@@ -193,12 +180,6 @@ public class StepFragment extends Fragment {
         mExoPlayer.release();
         mExoPlayer=null;
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        releasePlayer();
-//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -225,7 +206,7 @@ public class StepFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.i(LOG_TAG,"On Start");
-        if (Util.SDK_INT > 23) {
+        if (Util.SDK_INT > 23 || mExoPlayer == null) {
             initializePlayer();
         }
     }
