@@ -21,6 +21,9 @@ public class RecipeSteps implements Parcelable{
     //VideoURL of the recipeStep.
     private String mVideoURL;
 
+    //Thumbnail url of the recipeStep.
+    private String mThumbnailURL;
+
     /*
     * Create a new RecipeSteps object.
     *
@@ -28,12 +31,14 @@ public class RecipeSteps implements Parcelable{
     * @param shortDescription
     * @param description
     * @param videoURL
+    * @param thumbnailURL
     * */
-    public RecipeSteps (String stepId, String shortDescription, String description, String videoURL) {
+    public RecipeSteps (String stepId, String shortDescription, String description, String videoURL, String thumbnailURL) {
         mStepId = stepId;
         mShortDescription = shortDescription;
         mDescription = description;
         mVideoURL = videoURL;
+        mThumbnailURL = thumbnailURL;
     }
 
     protected RecipeSteps(Parcel in) {
@@ -41,6 +46,7 @@ public class RecipeSteps implements Parcelable{
         mShortDescription = in.readString();
         mDescription = in.readString();
         mVideoURL = in.readString();
+        mThumbnailURL = in.readString();
     }
 
     public static final Creator<RecipeSteps> CREATOR = new Creator<RecipeSteps>() {
@@ -59,6 +65,7 @@ public class RecipeSteps implements Parcelable{
     public String getShortDescription() {return mShortDescription; }
     public String getDescription() {return mDescription; }
     public String getVideoURL() {return mVideoURL; }
+    public String getThumbnailURL() {return mThumbnailURL; }
 
     @Override
     public int describeContents() {
@@ -71,5 +78,6 @@ public class RecipeSteps implements Parcelable{
         parcel.writeString(mShortDescription);
         parcel.writeString(mDescription);
         parcel.writeString(mVideoURL);
+        parcel.writeString(mThumbnailURL);
     }
 }

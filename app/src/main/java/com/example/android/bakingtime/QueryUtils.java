@@ -161,6 +161,7 @@ public class QueryUtils {
                 String shortDescription = "";
                 String description = "";
                 String videoURL;
+                String thumbnailURL;
 
                 List<RecipeSteps> recipeSteps = new ArrayList<>();
 
@@ -172,10 +173,11 @@ public class QueryUtils {
                     shortDescription = currentSteps.getString("shortDescription");
                     description = currentSteps.getString("description");
                     videoURL = currentSteps.getString("videoURL");
+                    thumbnailURL = currentSteps.getString("thumbnailURL");
 
 //                    Log.i(LOG_TAG,name + ": " + stepId + ": " + shortDescription);
 
-                    RecipeSteps recipeSteps1 = new RecipeSteps(stepId,shortDescription,description,videoURL);
+                    RecipeSteps recipeSteps1 = new RecipeSteps(stepId,shortDescription,description,videoURL,thumbnailURL);
                     recipeSteps.add(recipeSteps1);
                 }
 

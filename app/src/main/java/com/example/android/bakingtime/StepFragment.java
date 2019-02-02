@@ -40,6 +40,7 @@ public class StepFragment extends Fragment {
     private String shortDescription = "";
     private String description = "";
     private String videoURL = "";
+    private String thumbnailURL = "";
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
     private RecipeSteps currentStep;
@@ -89,6 +90,7 @@ public class StepFragment extends Fragment {
         shortDescription = currentStep.getShortDescription();
         description = currentStep.getDescription();
         videoURL = currentStep.getVideoURL();
+        thumbnailURL = currentStep.getThumbnailURL();
         extractMediaSource(Uri.parse(videoURL));
 
         Log.i(LOG_TAG,description + " " + videoURL);
